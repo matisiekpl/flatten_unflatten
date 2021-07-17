@@ -35,4 +35,42 @@ class Flatten {
     if (target.keys.first.toString().startsWith('[')) result = result[''];
     return result;
   }
+
+  Map<dynamic, dynamic> flat(dynamic input) {
+    var flatten = null;
+    flatten = (obj, res, extraKey) {
+      if (obj is List) {
+        int i = 0;
+        for (var row in obj) {
+          if (row is Map || row is List)
+            flatten(row, res, '$extraKey[$i].');
+          else
+            res[extraKey + '[$i]'] = row;
+          i++;
+        }
+      } else
+        for (var key in obj.keys) {
+          if (obj[key] is List) {
+            int i = 0;
+            for (var row in obj[key]) {
+              if (row is Map || row is List)
+                flatten(row, res, '$extraKey$key[$i].');
+              else
+                res[extraKey + key + '[$i]'] = row;
+              i++;
+            }
+          } else if (obj[key] is Map) {
+            flatten(obj[key], res, '$extraKey$key.');
+          } else {
+            res[extraKey + key] = obj[key];
+          }
+        }
+      return res;
+    };
+    var out = flatten(input, {}, '');
+    var result = {};
+    for (var k in out.keys)
+      result[k.toString().replaceAll('].[', '][')] = out[k];
+    return result;
+  }
 }

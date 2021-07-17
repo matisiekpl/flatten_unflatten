@@ -119,4 +119,57 @@ void main() {
           }));
     });
   });
+
+  group('flat', () {
+    test('flat simple object', () {
+      final obj = Flatten();
+      expect(
+          obj.flat({
+            'a': {
+              'b': {'c': 'x'}
+            }
+          }),
+          equals({'a.b.c': 'x'}));
+    });
+
+    test('flat simple object with nested list', () {
+      final obj = Flatten();
+      expect(
+          obj.flat({
+            'a': {
+              'b': [11, 17]
+            }
+          }),
+          equals({'a.b[0]': 11, 'a.b[1]': 17}));
+    });
+
+    test('flat list as the entrypoint', () {
+      final obj = Flatten();
+      expect(
+          obj.flat([
+            {
+              'a': {
+                'b': [11, 17]
+              }
+            }
+          ]),
+          equals({'[0].a.b[0]': 11, '[0].a.b[1]': 17}));
+    });
+
+    test('flat object with nested lists placed close to each other', () {
+      final obj = Flatten();
+      expect(
+          obj.flat([
+            {
+              'a': {
+                'b': [
+                  [12, 13],
+                  17
+                ]
+              }
+            }
+          ]),
+          equals({'[0].a.b[0][0]': 12, '[0].a.b[0][1]': 13, '[0].a.b[1]': 17}));
+    });
+  });
 }
