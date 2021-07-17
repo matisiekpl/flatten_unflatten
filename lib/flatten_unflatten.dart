@@ -106,11 +106,3 @@ class Flatten {
     return result;
   }
 }
-
-void main() {
-  var obj = new Flatten();
-  print(obj.unflat({
-    'a[0][0]': 'x',
-    'a[0][1]': 'y',
-  }));
-}
