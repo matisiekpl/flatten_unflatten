@@ -18,7 +18,10 @@ class Flatten {
           var idx = int.parse(
               part.substring(part.indexOf('[') + 1, part.indexOf(']')));
           part = part.substring(0, part.indexOf('['));
-          pointer[part] = _generateList(idx + 1);
+          if (pointer[part] == null) pointer[part] = _generateList(idx + 1);
+          while (pointer[part].length < idx + 1) {
+            pointer[part].add({});
+          }
           if (isLast)
             pointer[part][idx] = target[path];
           else
@@ -73,4 +76,12 @@ class Flatten {
       result[k.toString().replaceAll('].[', '][')] = out[k];
     return result;
   }
+}
+
+void main() {
+  var obj = new Flatten();
+  print(obj.unflat({
+    'a[0]': 'x',
+    'a[1]': 'y',
+  }));
 }
