@@ -8,8 +8,13 @@ class Flatten {
   }
 
   dynamic unflat(Map<String, dynamic> target) {
+    var normalized = {};
+    for (var k in target.keys)
+      normalized[k.replaceAll(
+          '][', '].__dart__unflattener__control__operator[')] = target[k];
     dynamic result = {};
-    target.keys.forEach((path) {
+    normalized.keys.forEach((path) {
+      path = path.replaceAll('][', '].__dart__unflattener__control__operator[');
       var parts = path.split('.');
       var pointer = result;
       for (var part in parts) {
@@ -23,19 +28,43 @@ class Flatten {
             pointer[part].add({});
           }
           if (isLast)
-            pointer[part][idx] = target[path];
+            pointer[part][idx] = normalized[path];
           else
             pointer = pointer[part][idx];
         } else {
           if (!(pointer as Map).containsKey(part)) pointer[part] = {};
           if (parts.last == part)
-            pointer[part] = target[path];
+            pointer[part] = normalized[path];
           else
             pointer = pointer[part];
         }
       }
     });
-    if (target.keys.first.toString().startsWith('[')) result = result[''];
+    var removeHelperTags = null;
+    removeHelperTags = (input) {
+      if (input is Map) {
+        if (input.containsKey('__dart__unflattener__control__operator')) {
+          return removeHelperTags(
+              input['__dart__unflattener__control__operator']);
+        } else {
+          var o = {};
+          for (var k in input.keys) {
+            o[k] = removeHelperTags(input[k]);
+          }
+          return o;
+        }
+      }
+      if (input is List) {
+        var o = [];
+        for (int i = 0; i < input.length; i++) {
+          o.add(removeHelperTags(input[i]));
+        }
+        return o;
+      }
+      return input;
+    };
+    result = removeHelperTags(result);
+    if (normalized.keys.first.toString().startsWith('[')) result = result[''];
     return result;
   }
 
@@ -81,7 +110,7 @@ class Flatten {
 void main() {
   var obj = new Flatten();
   print(obj.unflat({
-    'a[0]': 'x',
-    'a[1]': 'y',
+    'a[0][0]': 'x',
+    'a[0][1]': 'y',
   }));
 }
