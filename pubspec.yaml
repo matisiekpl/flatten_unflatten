@@ -1,0 +1,10 @@
+name: flatten_unflatten
+description: A zero-dependency flatten and unflatten library for maps and lists
+version: 0.0.1
+homepage: https://github.com/matisiekpl/flatten_unflatten
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dev_dependencies:
+  test: ^1.17.10
