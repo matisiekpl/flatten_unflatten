@@ -1,14 +1,27 @@
-# flatten_unflatten
+flatten_unflatten is a zero-dependency flatten and unflatten implementations for maps and lists
 
-A zero-dependency flatten and unflatten library for maps and lists
+![dart](https://github.com/matisiekpl/flatten_unflatten/actions/workflows/dart.yml/badge.svg)
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+```dart
+import 'package:flatten_unflatten/flatten_unflatten.dart';
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+void main() {
+  final flattener = new Flatten();
+
+  var flattened = flattener.flat({
+    'a': {
+      'b': {
+        'c': ['hello', 'world']
+      }
+    }
+  });
+  print(flattened); // prints {a.b.c[0]: hello, a.b.c[1]: world}
+
+  var unflattened = flattener.unflat({
+    'a.b.c[0]': 'hello', 'a.b.c[1]': 'world',
+  });
+  print(unflattened); // prints {a: {b: {c: [hello, world]}}}
+}
+```
